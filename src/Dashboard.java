@@ -78,7 +78,7 @@ public class Dashboard extends JFrame {
 		list.setBorder(new LineBorder(new Color(0, 0, 0)));
 		list.setBackground(Color.WHITE);
 		list.setValueIsAdjusting(true);
-		list.setVisibleRowCount(4);
+		list.setVisibleRowCount(3);
 		
 		list.setModel(new AbstractListModel() {
 			String[] values = new String[] {"Group 1", "Group 2", "Group 3", "Group 4", "Group 5", "Group 6", "Group 7"};
