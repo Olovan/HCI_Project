@@ -28,7 +28,7 @@ public class MainMenu extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainMenu frame = new MainMenu();
+					Screen_McScreenyface frame = new Screen_McScreenyface(new Dashboard());
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

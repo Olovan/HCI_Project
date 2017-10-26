@@ -16,6 +16,8 @@ import java.awt.Font;
 public class Dashboard extends JFrame {
 	private JTable expenseTable;
 	public Dashboard() {
+		this.setSize(640, 480);
+		
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JPanel northPanel = new JPanel();
