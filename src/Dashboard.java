@@ -18,6 +18,7 @@ public class Dashboard extends JFrame {
 	private JTable expenseTable;
 	public Dashboard() {
 		this.setSize(640, 480);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		getContentPane().setLayout(new BorderLayout(5, 0));
 		
