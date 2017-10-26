@@ -3,6 +3,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.List;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,7 +19,7 @@ public class Dashboard extends JFrame {
 	public Dashboard() {
 		this.setSize(640, 480);
 		
-		getContentPane().setLayout(new BorderLayout(0, 0));
+		getContentPane().setLayout(new BorderLayout(5, 0));
 		
 		JPanel northPanel = new JPanel();
 		getContentPane().add(northPanel, BorderLayout.NORTH);
@@ -127,20 +128,17 @@ public class Dashboard extends JFrame {
 		
 		JPanel eastPanel = new JPanel();
 		getContentPane().add(eastPanel, BorderLayout.EAST);
-		eastPanel.setLayout(new GridLayout(2, 1, 0, 0));
+		eastPanel.setLayout(new GridLayout(1, 1, 0, 0));
 		
-		ImageIcon image = new ImageIcon("pie_project_grouped.png");
-		JLabel label = new JLabel("");
-		label.setIcon(image);
-		JPanel graphPanel = new JPanel(new BorderLayout());
-		
-		graphPanel.add(label, BorderLayout.CENTER);
-		eastPanel.add(graphPanel);
-		
-		
+		JLabel label=new JLabel();
+		ImageIcon image = new ImageIcon(new ImageIcon("images.jpg").getImage().getScaledInstance(130, 130, Image.SCALE_DEFAULT));
+			
 		JPanel overallGraphPanel = new JPanel();
-		image=new ImageIcon("images.jpg");
-		label.setIcon(image);
+		ImageIcon imageIcon = new ImageIcon(new ImageIcon("images.jpg").getImage().getScaledInstance(130, 130, Image.SCALE_DEFAULT));
+		label.setIcon(imageIcon);
+		
+		//label.setIcon(image);
+		
 		FlowLayout flowLayout_1 = (FlowLayout) overallGraphPanel.getLayout();
 		flowLayout_1.setVgap(50);
 		flowLayout_1.setHgap(70);
