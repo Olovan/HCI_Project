@@ -129,16 +129,22 @@ public class Dashboard extends JFrame {
 		getContentPane().add(eastPanel, BorderLayout.EAST);
 		eastPanel.setLayout(new GridLayout(2, 1, 0, 0));
 		
-		JPanel graphPanel = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) graphPanel.getLayout();
-		flowLayout.setVgap(50);
-		flowLayout.setHgap(70);
+		ImageIcon image = new ImageIcon("pie_project_grouped.png");
+		JLabel label = new JLabel("");
+		label.setIcon(image);
+		JPanel graphPanel = new JPanel(new BorderLayout());
+		
+		graphPanel.add(label, BorderLayout.CENTER);
 		eastPanel.add(graphPanel);
 		
+		
 		JPanel overallGraphPanel = new JPanel();
+		image=new ImageIcon("images.jpg");
+		label.setIcon(image);
 		FlowLayout flowLayout_1 = (FlowLayout) overallGraphPanel.getLayout();
 		flowLayout_1.setVgap(50);
 		flowLayout_1.setHgap(70);
+		overallGraphPanel.add(label);
 		eastPanel.add(overallGraphPanel);
 		
 		JPanel centerPanel = new JPanel();
@@ -172,6 +178,9 @@ public class Dashboard extends JFrame {
 		lblExpenseTable.setHorizontalAlignment(SwingConstants.CENTER);
 		centerPanel.add(lblExpenseTable, BorderLayout.NORTH);
 		centerPanel.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{expenseTable}));
+		setVisible(true);
 	}
-
+	public static void main(String[]args){
+		new Dashboard();
+	}
 }
