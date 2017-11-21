@@ -5,6 +5,7 @@ class Main  {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 		MainMenu frame = new MainMenu();
+		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
 }
