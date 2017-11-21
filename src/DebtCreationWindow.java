@@ -32,11 +32,14 @@ public class DebtCreationWindow extends JFrame {
 	private JPanel peoplePanel;
 	private JComboBox comboBox;
 	private JScrollPane scrollPane;
+	private JComboBox debtPayerComboBox;
+	private MainMenu mainMenu;
 
 	/**
 	 * Create the frame.
 	 */
-	public DebtCreationWindow() {
+	public DebtCreationWindow(MainMenu mainMenu) {
+		this.mainMenu = mainMenu;
 		setTitle("Create New Debt");
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -44,9 +47,9 @@ public class DebtCreationWindow extends JFrame {
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[] {0, 0};
-		gbl_contentPane.rowHeights = new int[] {0, 0, 0, 0, 0, 0};
+		gbl_contentPane.rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0};
 		gbl_contentPane.columnWeights = new double[]{1.0, 1.0};
-		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 0.0};
+		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0};
 		contentPane.setLayout(gbl_contentPane);
 		
 		JLabel lblDebtLabel = new JLabel("Debt Label");
@@ -149,12 +152,24 @@ public class DebtCreationWindow extends JFrame {
 		contentPane.add(lblPeopleAddedTo, gbc_lblPeopleAddedTo);
 		
 		JButton btnCreateDebt = new JButton("Create Debt");
-		btnCreateDebt.addActionListener(arg0 -> setVisible(false));
+		btnCreateDebt.addActionListener(arg0 -> {
+			setVisible(false);
+			mainMenu.addDebt(debtLabelTextField.getText(), Float.parseFloat(debtAmountTextField.getText()), "11/21/2017");
+			});
+		
+		debtPayerComboBox = new JComboBox();
+		debtPayerComboBox.setModel(new DefaultComboBoxModel(new String[] {"You", "Lowell", "Monica", "Ian", "Micah", "Isaac"}));
+		GridBagConstraints gbc_debtPayerComboBox = new GridBagConstraints();
+		gbc_debtPayerComboBox.insets = new Insets(0, 0, 5, 0);
+		gbc_debtPayerComboBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_debtPayerComboBox.gridx = 1;
+		gbc_debtPayerComboBox.gridy = 5;
+		contentPane.add(debtPayerComboBox, gbc_debtPayerComboBox);
 		GridBagConstraints gbc_btnCreateDebt = new GridBagConstraints();
 		gbc_btnCreateDebt.fill = GridBagConstraints.BOTH;
 		gbc_btnCreateDebt.insets = new Insets(0, 0, 0, 5);
 		gbc_btnCreateDebt.gridx = 0;
-		gbc_btnCreateDebt.gridy = 5;
+		gbc_btnCreateDebt.gridy = 6;
 		contentPane.add(btnCreateDebt, gbc_btnCreateDebt);
 		
 		JButton btnCancell = new JButton("Cancel");
@@ -163,8 +178,16 @@ public class DebtCreationWindow extends JFrame {
 		gbc_btnCancell.anchor = GridBagConstraints.EAST;
 		gbc_btnCancell.fill = GridBagConstraints.VERTICAL;
 		gbc_btnCancell.gridx = 1;
-		gbc_btnCancell.gridy = 5;
+		gbc_btnCancell.gridy = 6;
 		contentPane.add(btnCancell, gbc_btnCancell);
+		
+		JLabel lblNewLabel = new JLabel("Who Is Paying?");
+		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
+		gbc_lblNewLabel.anchor = GridBagConstraints.EAST;
+		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel.gridx = 0;
+		gbc_lblNewLabel.gridy = 5;
+		contentPane.add(lblNewLabel, gbc_lblNewLabel);
 	}
 
 	public void clearInfo() {
@@ -174,7 +197,7 @@ public class DebtCreationWindow extends JFrame {
 		scrollPane.revalidate();
 		scrollPane.repaint();
 		comboBox.removeAllItems();
-		for(String name : new String[] {"All", "Lowell", "Monica", "Ian", "Micah", "Isaac"}) {
+		for(String name : new String[] {"All", "You", "Lowell", "Monica", "Ian", "Micah", "Isaac"}) {
 			comboBox.addItem(name);
 		}
 	}
