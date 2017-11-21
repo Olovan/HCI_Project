@@ -115,18 +115,14 @@ public class MainMenu extends JFrame {
 			addPersonBtn.setMaximumSize(new Dimension(200, 23));
 			addPersonBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 			
-			debtBtn.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					debtWindow.clearInfo();
-					debtWindow.setVisible(true);
-				}
-			});
-			addPersonBtn.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					String name = JOptionPane.showInputDialog("Enter Name");
-					personDropdown.box.addItem(name);
-				}
-			});
+			debtBtn.addActionListener(e -> {
+                debtWindow.clearInfo();
+                debtWindow.setVisible(true);
+            });
+			addPersonBtn.addActionListener(e -> {
+                String name = JOptionPane.showInputDialog("Enter Name");
+                personDropdown.box.addItem(name);
+            });
 
 			add(debtBtn);
 			add(paymentBtn);

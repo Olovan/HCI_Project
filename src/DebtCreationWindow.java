@@ -97,18 +97,16 @@ public class DebtCreationWindow extends JFrame {
 		contentPane.add(comboBox, gbc_comboBox);
 		
 		JButton btnAddPersonTo = new JButton("Add Person to Debt");
-		btnAddPersonTo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				JPanel newPanel = new JPanel();
-				newPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-				newPanel.setBackground(new Color(0xE3E3E3));
-				newPanel.add(new JLabel((String)comboBox.getSelectedItem()));
-				newPanel.setMaximumSize(new Dimension(2000, 30));
-				peoplePanel.add(newPanel);
-				scrollPane.revalidate();
-				scrollPane.repaint();
-			}
-		});
+		btnAddPersonTo.addActionListener(arg0 -> {
+            JPanel newPanel = new JPanel();
+            newPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+            newPanel.setBackground(new Color(0xE3E3E3));
+            newPanel.add(new JLabel((String)comboBox.getSelectedItem()));
+            newPanel.setMaximumSize(new Dimension(2000, 30));
+            peoplePanel.add(newPanel);
+            scrollPane.revalidate();
+            scrollPane.repaint();
+        });
 		GridBagConstraints gbc_btnAddPersonTo = new GridBagConstraints();
 		gbc_btnAddPersonTo.anchor = GridBagConstraints.WEST;
 		gbc_btnAddPersonTo.insets = new Insets(0, 0, 5, 0);
@@ -134,11 +132,7 @@ public class DebtCreationWindow extends JFrame {
 		contentPane.add(lblPeopleAddedTo, gbc_lblPeopleAddedTo);
 		
 		JButton btnCreateDebt = new JButton("Create Debt");
-		btnCreateDebt.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				setVisible(false);
-			}
-		});
+		btnCreateDebt.addActionListener(arg0 -> setVisible(false));
 		GridBagConstraints gbc_btnCreateDebt = new GridBagConstraints();
 		gbc_btnCreateDebt.fill = GridBagConstraints.BOTH;
 		gbc_btnCreateDebt.insets = new Insets(0, 0, 0, 5);
@@ -147,11 +141,7 @@ public class DebtCreationWindow extends JFrame {
 		contentPane.add(btnCreateDebt, gbc_btnCreateDebt);
 		
 		JButton btnCancell = new JButton("Cancel");
-		btnCancell.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-			}
-		});
+		btnCancell.addActionListener(e -> setVisible(false));
 		GridBagConstraints gbc_btnCancell = new GridBagConstraints();
 		gbc_btnCancell.anchor = GridBagConstraints.EAST;
 		gbc_btnCancell.fill = GridBagConstraints.VERTICAL;
