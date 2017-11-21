@@ -121,7 +121,7 @@ public class MainMenu extends JFrame {
                 debtWindow.setVisible(true);
             });
 			addPersonBtn.addActionListener(e -> {
-                String name = JOptionPane.showInputDialog("Enter Name");
+                String name = JOptionPane.showInputDialog(this, "Enter Name");
                 personDropdown.box.addItem(name);
             });
 
