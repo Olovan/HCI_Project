@@ -35,6 +35,7 @@ public class MainMenu extends JFrame {
 	private JButton paymentBtn;
 	private JButton addPersonBtn;
 	private JComboBox<String> peopleBox;
+	private DebtCreationWindow debtWindow;
 	
 	TotalDebtPanel totalDebtPanel;
 	JPanel debtPanel;
@@ -52,6 +53,7 @@ public class MainMenu extends JFrame {
 		contentPane.add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
 
+		debtWindow = new DebtCreationWindow();
 		debtBtn = new JButton("Add Debt");
 		paymentBtn = new JButton("Add Payment");
 		addPersonBtn = new JButton("Add Person");
@@ -110,6 +112,13 @@ public class MainMenu extends JFrame {
 			addPersonBtn.setMinimumSize(new Dimension(200, 23));
 			addPersonBtn.setMaximumSize(new Dimension(200, 23));
 			addPersonBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+			
+			debtBtn.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					debtWindow.clearInfo();
+					debtWindow.setVisible(true);
+				}
+			});
 			addPersonBtn.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JOptionPane.showInputDialog("Enter Name");
