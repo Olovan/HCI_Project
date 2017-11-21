@@ -20,6 +20,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.awt.FlowLayout;
 import java.awt.Font;
 
@@ -33,7 +35,6 @@ public class MainMenu extends JFrame {
 
 	private JPanel contentPane;
 	private JButton debtBtn;
-	private JButton paymentBtn;
 	private JButton addPersonBtn;
 	private JComboBox<String> peopleBox;
 	private DebtCreationWindow debtWindow;
@@ -59,13 +60,12 @@ public class MainMenu extends JFrame {
 
 		debtWindow = new DebtCreationWindow(this);
 		debtBtn = new JButton("Add Debt");
-		paymentBtn = new JButton("Add Payment");
 		addPersonBtn = new JButton("Add Person");
 		peopleBox = new JComboBox<String>(new String[]{"Micah", "Ian", "Isaac", "Lowell", "Monica"});
 		personDropdown = new PersonDropdown();
 		totalDebtPanel = new TotalDebtPanel(215);
 
-		contentPanel.add(new LeftButtonPanel(debtBtn, paymentBtn, addPersonBtn));
+		contentPanel.add(new LeftButtonPanel(debtBtn, addPersonBtn));
 
 		//Build Right Panel
 		JPanel rightPanel = new JPanel();
@@ -92,6 +92,16 @@ public class MainMenu extends JFrame {
 		rightPanel.add(totalDebtPanel);
 	}
 	
+	public void addDebt(String label, float amount) {
+		String date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
+		debtsPanel.add(new DebtEntry(label, amount, date));
+		totalDebtPanel.addDebt(amount);
+		debtsPanel.revalidate();
+		scrollPane.revalidate();
+		debtsPanel.repaint();
+		scrollPane.repaint();
+	}
+	
 	public void addDebt(String label, float amount, String date) {
 		debtsPanel.add(new DebtEntry(label, amount, date));
 		totalDebtPanel.addDebt(amount);
@@ -103,9 +113,8 @@ public class MainMenu extends JFrame {
 
 	private class LeftButtonPanel extends JPanel{
 		private JButton debtBtn;
-		private JButton paymentBtn;
 		private JButton addPersonBtn;
-		public LeftButtonPanel(JButton debtBtn, JButton paymentBtn, JButton addPersonBtn) {
+		public LeftButtonPanel(JButton debtBtn, JButton addPersonBtn) {
 			setBorder(BorderFactory.createEtchedBorder());
 			setPreferredSize(new Dimension(200, 10));
 			setMaximumSize(new Dimension(300, 32767));
@@ -115,10 +124,7 @@ public class MainMenu extends JFrame {
 			debtBtn.setMaximumSize(new Dimension(200, 50));
 			debtBtn.setPreferredSize(new Dimension(200, 50));
 			debtBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-			paymentBtn.setPreferredSize(new Dimension(200, 23));
-			paymentBtn.setMinimumSize(new Dimension(200, 23));
-			paymentBtn.setMaximumSize(new Dimension(200, 23));
-			paymentBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+
 			addPersonBtn.setPreferredSize(new Dimension(200, 23));
 			addPersonBtn.setMinimumSize(new Dimension(200, 23));
 			addPersonBtn.setMaximumSize(new Dimension(200, 23));
@@ -135,18 +141,16 @@ public class MainMenu extends JFrame {
             });
 
 			add(debtBtn);
-			add(paymentBtn);
 			add(addPersonBtn);
 
 			this.debtBtn = debtBtn;
-			this.paymentBtn = paymentBtn;
 			this.addPersonBtn = addPersonBtn;
 		}
 	}
 	private class PersonDropdown extends JPanel{
 		JComboBox<String> box;
 		public PersonDropdown() {
-			this.box = new JComboBox<String>(new String[] {"All", "You", "Lowell", "Monica", "Ian", "Micah", "Isaac"});
+			this.box = new JComboBox<String>(new String[] {"All", "Lowell", "Monica", "Ian", "Micah", "Isaac"});
 			
 			setBorder(BorderFactory.createEtchedBorder());
 			setAlignmentY(Component.TOP_ALIGNMENT);
@@ -210,7 +214,7 @@ public class MainMenu extends JFrame {
 		}
 		
 		private void setColor(float amount, JPanel content) {
-			if(amount > 0)
+			if(amount <= 0)
 				content.setBackground(new Color(230, 250, 230));
 			else
 				content.setBackground(new Color(250, 230, 230));
@@ -222,7 +226,7 @@ public class MainMenu extends JFrame {
 		
 		public TotalDebtPanel(float debt) {
 			this.debt = debt;
-			debtLabel = new JLabel((debt < 0 ? "Owes You: $" + Math.abs(debt) : "Is Owed: $" + Math.abs(debt)));
+			debtLabel = new JLabel((debt < 0 ? "Owes You: $" + Math.abs(debt) : "You Owe Them: $" + Math.abs(debt)));
 			
 			setLayout(new BorderLayout());
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
@@ -237,7 +241,7 @@ public class MainMenu extends JFrame {
 		
 		public void addDebt(float debt) {
 			this.debt += debt;
-			debtLabel.setText((this.debt < 0 ? "Owes You: $" + Math.abs(this.debt) : "Is Owed: $" + Math.abs(this.debt)));
+			debtLabel.setText((this.debt < 0 ? "Owes You: $" + Math.abs(this.debt) : "You Owe Them: $" + Math.abs(this.debt)));
 		}
 	}
 

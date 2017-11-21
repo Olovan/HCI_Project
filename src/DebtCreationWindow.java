@@ -154,7 +154,7 @@ public class DebtCreationWindow extends JFrame {
 		JButton btnCreateDebt = new JButton("Create Debt");
 		btnCreateDebt.addActionListener(arg0 -> {
 			setVisible(false);
-			mainMenu.addDebt(debtLabelTextField.getText(), Float.parseFloat(debtAmountTextField.getText()), "11/21/2017");
+			mainMenu.addDebt(debtLabelTextField.getText(), Float.parseFloat(debtAmountTextField.getText()));
 			});
 		
 		debtPayerComboBox = new JComboBox();
