@@ -98,14 +98,31 @@ public class DebtCreationWindow extends JFrame {
 		
 		JButton btnAddPersonTo = new JButton("Add Person to Debt");
 		btnAddPersonTo.addActionListener(arg0 -> {
-            JPanel newPanel = new JPanel();
-            newPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-            newPanel.setBackground(new Color(0xE3E3E3));
-            newPanel.add(new JLabel((String)comboBox.getSelectedItem()));
-            newPanel.setMaximumSize(new Dimension(2000, 30));
-            peoplePanel.add(newPanel);
-            scrollPane.revalidate();
-            scrollPane.repaint();
+			if(comboBox.getSelectedItem() == null) 
+				return;
+			if(comboBox.getSelectedItem().equals("All")) {
+				for(int i = 1; i < comboBox.getItemCount();) {
+					JPanel newPanel = new JPanel();
+		            newPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		            newPanel.setBackground(new Color(0xE3E3E3));
+		            newPanel.add(new JLabel((String)comboBox.getItemAt(i)));
+		            newPanel.setMaximumSize(new Dimension(2000, 30));
+		            peoplePanel.add(newPanel);
+		            comboBox.removeItemAt(i);
+		            scrollPane.revalidate();
+		            scrollPane.repaint();
+				}
+			} else {
+	            JPanel newPanel = new JPanel();
+	            newPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+	            newPanel.setBackground(new Color(0xE3E3E3));
+	            newPanel.add(new JLabel((String)comboBox.getSelectedItem()));
+	            newPanel.setMaximumSize(new Dimension(2000, 30));
+	            peoplePanel.add(newPanel);
+	            comboBox.removeItem(comboBox.getSelectedItem());
+	            scrollPane.revalidate();
+	            scrollPane.repaint();
+			}
         });
 		GridBagConstraints gbc_btnAddPersonTo = new GridBagConstraints();
 		gbc_btnAddPersonTo.anchor = GridBagConstraints.WEST;
@@ -156,6 +173,9 @@ public class DebtCreationWindow extends JFrame {
 		peoplePanel.removeAll();
 		scrollPane.revalidate();
 		scrollPane.repaint();
-		
+		comboBox.removeAllItems();
+		for(String name : new String[] {"All", "Lowell", "Monica", "Ian", "Micah", "Isaac"}) {
+			comboBox.addItem(name);
+		}
 	}
 }
