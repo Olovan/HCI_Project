@@ -117,6 +117,7 @@ public class MainMenu extends JFrame {
 			
 			debtBtn.addActionListener(e -> {
                 debtWindow.clearInfo();
+                debtWindow.setLocation(getLocationOnScreen());
                 debtWindow.setVisible(true);
             });
 			addPersonBtn.addActionListener(e -> {
