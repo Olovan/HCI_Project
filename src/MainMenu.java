@@ -84,12 +84,12 @@ public class MainMenu extends JFrame {
 		debtsPanel.add(Box.createVerticalStrut(5));
 		debtsPanel.add(new DebtEntry("Rent", 200, "11/20/2017"));
 		debtsPanel.add(Box.createVerticalStrut(5));
-		debtsPanel.add(new DebtEntry("Gas", 50, "11/20/2017"));
+		debtsPanel.add(new DebtEntry("Gas", -50, "11/20/2017"));
 		debtsPanel.add(Box.createVerticalStrut(5));
 		debtsPanel.add(new DebtEntry("Movie Tickets", 15, "11/20/2017"));
 		debtsPanel.add(Box.createVerticalStrut(5));
 		debtsPanel.add(Box.createVerticalGlue());
-		rightPanel.add(new TotalDebtPanel(315));
+		rightPanel.add(new TotalDebtPanel(215));
 	}
 
 	private class LeftButtonPanel extends JPanel{
@@ -123,7 +123,8 @@ public class MainMenu extends JFrame {
 			});
 			addPersonBtn.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JOptionPane.showInputDialog("Enter Name");
+					String name = JOptionPane.showInputDialog("Enter Name");
+					personDropdown.box.addItem(name);
 				}
 			});
 
@@ -156,10 +157,10 @@ public class MainMenu extends JFrame {
 		JLabel amount;
 		public DebtEntry(String name, float amount, String date) {
 			this.name = new JLabel(name);
-			this.amount = new JLabel("$" + amount);
+			this.amount = new JLabel("$" + Math.abs(amount));
 			this.date = new JLabel(date);
 
-			setBackground(new Color(230, 250, 230));
+			setColor(amount);
 			setBorder(new LineBorder(new Color(0, 0, 0)));
 			setPreferredSize(new Dimension(10, 50));
 			setMinimumSize(new Dimension(10, 50));
@@ -175,6 +176,13 @@ public class MainMenu extends JFrame {
 			add(Box.createHorizontalGlue());
 			add(this.date);
 			add(Box.createHorizontalStrut(20));
+		}
+		
+		private void setColor(float amount) {
+			if(amount > 0)
+				setBackground(new Color(230, 250, 230));
+			else
+				setBackground(new Color(250, 230, 230));
 		}
 	}
 	private class TotalDebtPanel extends JPanel {
