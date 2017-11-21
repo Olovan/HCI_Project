@@ -36,6 +36,7 @@ public class MainMenu extends JFrame {
 	private JButton addPersonBtn;
 	private JComboBox<String> peopleBox;
 	private DebtCreationWindow debtWindow;
+	private PersonDropdown personDropdown;
 	
 	TotalDebtPanel totalDebtPanel;
 	JPanel debtPanel;
@@ -58,6 +59,7 @@ public class MainMenu extends JFrame {
 		paymentBtn = new JButton("Add Payment");
 		addPersonBtn = new JButton("Add Person");
 		peopleBox = new JComboBox<String>(new String[]{"Micah", "Ian", "Isaac", "Lowell", "Monica"});
+		personDropdown = new PersonDropdown();
 
 		contentPanel.add(new LeftButtonPanel(debtBtn, paymentBtn, addPersonBtn));
 
@@ -73,7 +75,7 @@ public class MainMenu extends JFrame {
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		contentPanel.add(rightPanel);
 
-		rightPanel.add(new PersonDropdown());
+		rightPanel.add(personDropdown);
 		rightPanel.add(scrollPane);
 
 		Component horizontalStrut = Box.createHorizontalStrut(20);

@@ -134,6 +134,11 @@ public class DebtCreationWindow extends JFrame {
 		contentPane.add(lblPeopleAddedTo, gbc_lblPeopleAddedTo);
 		
 		JButton btnCreateDebt = new JButton("Create Debt");
+		btnCreateDebt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				setVisible(false);
+			}
+		});
 		GridBagConstraints gbc_btnCreateDebt = new GridBagConstraints();
 		gbc_btnCreateDebt.fill = GridBagConstraints.BOTH;
 		gbc_btnCreateDebt.insets = new Insets(0, 0, 0, 5);
@@ -142,6 +147,11 @@ public class DebtCreationWindow extends JFrame {
 		contentPane.add(btnCreateDebt, gbc_btnCreateDebt);
 		
 		JButton btnCancell = new JButton("Cancel");
+		btnCancell.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+			}
+		});
 		GridBagConstraints gbc_btnCancell = new GridBagConstraints();
 		gbc_btnCancell.anchor = GridBagConstraints.EAST;
 		gbc_btnCancell.fill = GridBagConstraints.VERTICAL;
