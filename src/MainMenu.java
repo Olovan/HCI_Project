@@ -1,4 +1,6 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -6,7 +8,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.BoxLayout;
-import java.awt.Dimension;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 
@@ -28,7 +29,8 @@ import java.awt.Font;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
-import java.awt.Color;
+
+import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class MainMenu extends JFrame {
@@ -51,6 +53,7 @@ public class MainMenu extends JFrame {
 	public MainMenu() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 804, 629);
+		setTitle("EulersAbacus");
 		contentPane = new JPanel();
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
@@ -58,19 +61,19 @@ public class MainMenu extends JFrame {
 		contentPane.add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
 
+		debtsPanel = new JPanel();
+		totalDebtPanel = new TotalDebtPanel(215);
+		scrollPane = new JScrollPane(debtsPanel);
 		debtWindow = new DebtCreationWindow(this);
 		debtBtn = new JButton("Add Debt");
 		addPersonBtn = new JButton("Add Person");
 		peopleBox = new JComboBox<String>(new String[]{"Micah", "Ian", "Isaac", "Lowell", "Monica"});
 		personDropdown = new PersonDropdown();
-		totalDebtPanel = new TotalDebtPanel(215);
 
 		contentPanel.add(new LeftButtonPanel(debtBtn, addPersonBtn));
 
 		//Build Right Panel
 		JPanel rightPanel = new JPanel();
-		debtsPanel = new JPanel();
-		scrollPane = new JScrollPane(debtsPanel);
 		rightPanel.setPreferredSize(new Dimension(600, 600));
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 		rightPanel.setBackground(new Color(0xCCCCCC));
@@ -84,31 +87,21 @@ public class MainMenu extends JFrame {
 
 		Component horizontalStrut = Box.createHorizontalStrut(20);
 
-		debtsPanel.add(new DebtEntry("Groceries", 50, "11/20/2017"));
-		debtsPanel.add(new DebtEntry("Rent", 200, "11/20/2017"));
-		debtsPanel.add(new DebtEntry("Gas", -50, "11/20/2017"));
-		debtsPanel.add(new DebtEntry("Movie Tickets", 15, "11/20/2017"));
-		
 		rightPanel.add(totalDebtPanel);
 	}
 	
-	public void addDebt(String label, float amount) {
-		String date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
-		debtsPanel.add(new DebtEntry(label, amount, date));
+	public void addDebt(String label, double amount, String date, int debtId) {
+		debtsPanel.add(new DebtEntry(label, amount, date, debtId));
 		totalDebtPanel.addDebt(amount);
 		debtsPanel.revalidate();
 		scrollPane.revalidate();
 		debtsPanel.repaint();
 		scrollPane.repaint();
 	}
-	
-	public void addDebt(String label, float amount, String date) {
-		debtsPanel.add(new DebtEntry(label, amount, date));
-		totalDebtPanel.addDebt(amount);
-		debtsPanel.revalidate();
-		scrollPane.revalidate();
-		debtsPanel.repaint();
-		scrollPane.repaint();
+
+	public void clearDebts() {
+		debtsPanel.removeAll();
+		totalDebtPanel.setDebt(0.0);
 	}
 
 	private class LeftButtonPanel extends JPanel{
@@ -137,7 +130,10 @@ public class MainMenu extends JFrame {
             });
 			addPersonBtn.addActionListener(e -> {
                 String name = JOptionPane.showInputDialog(this, "Enter Name");
-                personDropdown.box.addItem(name);
+				if(name != null) {
+					DatabaseHandler.addPerson(name);
+					personDropdown.refreshNameList();
+				}
             });
 
 			add(debtBtn);
@@ -147,10 +143,12 @@ public class MainMenu extends JFrame {
 			this.addPersonBtn = addPersonBtn;
 		}
 	}
-	private class PersonDropdown extends JPanel{
+	private class PersonDropdown extends JPanel implements ActionListener{
 		JComboBox<String> box;
+		ArrayList<Integer> personIds;
 		public PersonDropdown() {
-			this.box = new JComboBox<String>(new String[] {"All", "Lowell", "Monica", "Ian", "Micah", "Isaac"});
+			this.box = new JComboBox<String>();
+			personIds = new ArrayList<Integer>();
 			
 			setBorder(BorderFactory.createEtchedBorder());
 			setAlignmentY(Component.TOP_ALIGNMENT);
@@ -158,19 +156,50 @@ public class MainMenu extends JFrame {
 			setPreferredSize(new Dimension(570, 50));
 			setLayout(new GridLayout(1, 1));
 
+			box.addActionListener(this);
+
+			refreshNameList();
 			add(this.box);
+		}
+
+		public void refreshNameList() {
+			box.removeAllItems();
+			personIds.clear();
+			box.addItem("All");
+			personIds.add(-1);
+			ArrayList<Object[]> people = DatabaseHandler.execute("SELECT name, personId FROM people", 2);
+			for(Object[] personInfo : people) {
+				box.addItem((String)personInfo[0]);
+				personIds.add((int)personInfo[1]);
+			}
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			clearDebts();
+			ArrayList<Object[]> debtResults;
+			if(box.getSelectedIndex() == 0) {
+				debtResults = DatabaseHandler.execute("SELECT label, amount, date, debtId FROM debts", 4);
+			} else {
+				debtResults = DatabaseHandler.execute("SELECT label, amount, date, debtId FROM debts WHERE debtId=" + personIds.get(box.getSelectedIndex()) , 4);
+			}
+
+			for(Object[] debtInfo : debtResults) {
+				addDebt((String)debtInfo[0], (double)debtInfo[1], (String)debtInfo[2], (int)debtInfo[3]);
+			}
 		}
 	}
 	private class DebtEntry extends JPanel implements ActionListener{
 		JLabel date;
 		JLabel name;
 		JLabel amountLbl;
-		float amount;
-		public DebtEntry(String name, float amount, String date) {
+		int debtId;
+		double amount;
+		public DebtEntry(String name, double amount, String date, int debtId) {
 			this.name = new JLabel(name);
 			this.amount = amount;
 			this.amountLbl = new JLabel("$" + Math.abs(amount));
 			this.date = new JLabel(date);
+			this.debtId = debtId;
 			
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			JPanel content = new JPanel();
@@ -203,6 +232,7 @@ public class MainMenu extends JFrame {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
+			//TODO remove debt from database
 			debtsPanel.remove(Box.createVerticalStrut(5));
 			debtsPanel.remove(this);
 			debtsPanel.revalidate();
@@ -213,7 +243,7 @@ public class MainMenu extends JFrame {
 			
 		}
 		
-		private void setColor(float amount, JPanel content) {
+		private void setColor(double amount, JPanel content) {
 			if(amount <= 0)
 				content.setBackground(new Color(230, 250, 230));
 			else
@@ -222,11 +252,12 @@ public class MainMenu extends JFrame {
 	}
 	private class TotalDebtPanel extends JPanel {
 		JLabel debtLabel;
-		float debt;
+		double debt;
 		
-		public TotalDebtPanel(float debt) {
+		public TotalDebtPanel(double debt) {
 			this.debt = debt;
-			debtLabel = new JLabel((debt < 0 ? "Owes You: $" + Math.abs(debt) : "You Owe Them: $" + Math.abs(debt)));
+			debtLabel = new JLabel();
+			updateText();
 			
 			setLayout(new BorderLayout());
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
@@ -239,8 +270,17 @@ public class MainMenu extends JFrame {
 			add(debtLabel);
 		}
 		
-		public void addDebt(float debt) {
+		public void addDebt(double debt) {
 			this.debt += debt;
+			updateText();
+		}
+
+		public void setDebt(double amount) {
+			this.debt = amount;
+			updateText();
+		}
+
+		private void updateText() {
 			debtLabel.setText((this.debt < 0 ? "Owes You: $" + Math.abs(this.debt) : "You Owe Them: $" + Math.abs(this.debt)));
 		}
 	}

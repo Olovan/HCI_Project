@@ -2,7 +2,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class DatabaseHandler {
-    private static final String DATABASE = "database.sqlite3";
+    private static final String DATABASE = "./database.sqlite3";
     private static Connection conn = null;
 
     public static Integer addDebt(String label, Date date, Integer amount) {
@@ -24,7 +24,7 @@ public class DatabaseHandler {
         return insert("name", "people", '"' + name + '"');
     }
 
-    private static ArrayList<Object[]> getPeople(String queryModifiers) {
+    public static ArrayList<Object[]> getPeople(String queryModifiers) {
         return select("personId, name", "people", queryModifiers);
     }
 
@@ -55,18 +55,41 @@ public class DatabaseHandler {
             resultSet = db.createStatement().executeQuery(sql);
 
             Integer fieldCount = fields.split(",").length;
-            Object[] row = new Object[fieldCount];
-            while(resultSet.next())
-            for (int i = 0; i < fieldCount; i++) {
-                row[i] = resultSet.getObject(i+1);
-            }
-            results.add(row);
+            while(resultSet.next()) {
+            	Object[] row = new Object[fieldCount];
+				for (int i = 0; i < fieldCount; i++) {
+					row[i] = resultSet.getObject(i+1);
+				}
+				results.add(row);
+			}
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return results;
     }
+
+	public static ArrayList<Object[]> execute(String statement, int fieldCount) {
+        ResultSet resultSet;
+        ArrayList<Object[]> results = new ArrayList<>();
+        try {
+            Connection db = connect(DATABASE);
+            String sql = statement;
+            resultSet = db.createStatement().executeQuery(sql);
+
+            while(resultSet.next()) {
+            	Object[] row = new Object[fieldCount];
+				for (int i = 0; i < fieldCount; i++) {
+					row[i] = resultSet.getObject(i+1);
+				}
+				results.add(row);
+			}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return results;
+	}
 
     private static Connection connect(String path) {
         String url = "jdbc:sqlite:" + path;

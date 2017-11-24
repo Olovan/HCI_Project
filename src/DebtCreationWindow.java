@@ -24,6 +24,8 @@ import javax.swing.border.EtchedBorder;
 import java.awt.SystemColor;
 import javax.swing.UIManager;
 
+import java.util.ArrayList;
+
 public class DebtCreationWindow extends JFrame {
 
 	private JPanel contentPane;
@@ -154,7 +156,7 @@ public class DebtCreationWindow extends JFrame {
 		JButton btnCreateDebt = new JButton("Create Debt");
 		btnCreateDebt.addActionListener(arg0 -> {
 			setVisible(false);
-			mainMenu.addDebt(debtLabelTextField.getText(), Float.parseFloat(debtAmountTextField.getText()));
+			//mainMenu.addDebt(debtLabelTextField.getText(), Float.parseFloat(debtAmountTextField.getText()));
 			});
 		
 		debtPayerComboBox = new JComboBox();
@@ -197,8 +199,10 @@ public class DebtCreationWindow extends JFrame {
 		scrollPane.revalidate();
 		scrollPane.repaint();
 		comboBox.removeAllItems();
-		for(String name : new String[] {"All", "You", "Lowell", "Monica", "Ian", "Micah", "Isaac"}) {
-			comboBox.addItem(name);
+		comboBox.addItem("All");
+		ArrayList<Object[]> people = DatabaseHandler.select("name","people","");
+		for(Object[] personInfo : people) {
+			comboBox.addItem((String)personInfo[0]);
 		}
 	}
 }
