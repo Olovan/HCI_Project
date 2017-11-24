@@ -188,7 +188,6 @@ public class MainMenu extends JFrame {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("" + personIds.get(box.getSelectedIndex()));
 			refreshDebts();
 		}
 	}
