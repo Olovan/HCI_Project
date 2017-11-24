@@ -84,7 +84,7 @@ public class DatabaseHandler {
 
 	public static void modify(String statement) {
         try {
-            Connection db = connect(DATABASE);
+            Connection db = conn;
             PreparedStatement stmt = db.prepareStatement(statement);
             stmt.executeUpdate();
 		} catch (SQLException e) {
