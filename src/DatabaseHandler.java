@@ -2,7 +2,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class DatabaseHandler {
-    private static final String DATABASE = ".\\database.sqlite3";
+    private static final String DATABASE = "./database.sqlite3";
     private static Connection conn = null;
 
 	public static void connectToDatabase() {
