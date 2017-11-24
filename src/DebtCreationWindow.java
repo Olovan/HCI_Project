@@ -24,7 +24,9 @@ import javax.swing.border.EtchedBorder;
 import java.awt.SystemColor;
 import javax.swing.UIManager;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DebtCreationWindow extends JFrame {
 
@@ -37,10 +39,17 @@ public class DebtCreationWindow extends JFrame {
 	private JComboBox debtPayerComboBox;
 	private MainMenu mainMenu;
 
+	private ArrayList<Integer> debtParticipants;
+	private ArrayList<Integer> peopleIds;
+
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
 	/**
 	 * Create the frame.
 	 */
 	public DebtCreationWindow(MainMenu mainMenu) {
+		peopleIds = new ArrayList<Integer>();
+		debtParticipants = new ArrayList<Integer>();
 		this.mainMenu = mainMenu;
 		setTitle("Create New Debt");
 		setBounds(100, 100, 450, 300);
@@ -107,26 +116,10 @@ public class DebtCreationWindow extends JFrame {
 				return;
 			if(comboBox.getSelectedItem().equals("All")) {
 				for(int i = 1; i < comboBox.getItemCount();) {
-					JPanel newPanel = new JPanel();
-		            newPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		            newPanel.setBackground(new Color(0xE3E3E3));
-		            newPanel.add(new JLabel((String)comboBox.getItemAt(i)));
-		            newPanel.setMaximumSize(new Dimension(2000, 30));
-		            peoplePanel.add(newPanel);
-		            comboBox.removeItemAt(i);
-		            scrollPane.revalidate();
-		            scrollPane.repaint();
+					addDebtParticpant(i);
 				}
 			} else {
-	            JPanel newPanel = new JPanel();
-	            newPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-	            newPanel.setBackground(new Color(0xE3E3E3));
-	            newPanel.add(new JLabel((String)comboBox.getSelectedItem()));
-	            newPanel.setMaximumSize(new Dimension(2000, 30));
-	            peoplePanel.add(newPanel);
-	            comboBox.removeItem(comboBox.getSelectedItem());
-	            scrollPane.revalidate();
-	            scrollPane.repaint();
+				addDebtParticpant(comboBox.getSelectedIndex());
 			}
         });
 		GridBagConstraints gbc_btnAddPersonTo = new GridBagConstraints();
@@ -156,7 +149,8 @@ public class DebtCreationWindow extends JFrame {
 		JButton btnCreateDebt = new JButton("Create Debt");
 		btnCreateDebt.addActionListener(arg0 -> {
 			setVisible(false);
-			//mainMenu.addDebt(debtLabelTextField.getText(), Float.parseFloat(debtAmountTextField.getText()));
+			DatabaseHandler.addDebt(debtLabelTextField.getText(), Double.parseDouble(debtAmountTextField.getText()), dateFormat.format(new Date()), 1 );//TODO fix owner ID); 
+			mainMenu.refreshDebts();
 			});
 		
 		debtPayerComboBox = new JComboBox();
@@ -200,9 +194,26 @@ public class DebtCreationWindow extends JFrame {
 		scrollPane.repaint();
 		comboBox.removeAllItems();
 		comboBox.addItem("All");
-		ArrayList<Object[]> people = DatabaseHandler.select("name","people","");
+		peopleIds.add(-1);
+		ArrayList<Object[]> people = DatabaseHandler.select("SELECT name, personId FROM people", 2);
 		for(Object[] personInfo : people) {
 			comboBox.addItem((String)personInfo[0]);
+			peopleIds.add((Integer)personInfo[1]);
 		}
+	}
+
+	private void addDebtParticpant(int index) {
+		JPanel newPanel = new JPanel();
+		newPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		newPanel.setBackground(new Color(0xE3E3E3));
+		newPanel.add(new JLabel((String)comboBox.getItemAt(index)));
+		newPanel.setMaximumSize(new Dimension(2000, 30));
+		peoplePanel.add(newPanel);
+		comboBox.removeItemAt(index);
+		scrollPane.revalidate();
+		scrollPane.repaint();
+
+		debtParticipants.add(peopleIds.get(index));
+		peopleIds.remove(index);
 	}
 }

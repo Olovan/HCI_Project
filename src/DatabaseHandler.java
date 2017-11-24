@@ -2,11 +2,24 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class DatabaseHandler {
-    private static final String DATABASE = "./database.sqlite3";
+    private static final String DATABASE = ".\\database.sqlite3";
     private static Connection conn = null;
 
-    public static Integer addDebt(String label, Date date, Integer amount) {
-            return insert("label, date, amount", "debts", String.format("\"%s\", %s, %d", label, date, amount));
+	public static void connectToDatabase() {
+		connect(DATABASE);
+		System.out.println("Database Opened");
+	}
+
+	public static void disconnectFromDatabase() {
+		try {
+			conn.close();
+		} catch (Exception e) {
+			//Ignored
+		}
+	}
+
+    public static void addDebt(String label, Double amount, String date, Integer owner) {
+		modify("INSERT INTO debts (label, amount, date, owner) VALUES ( \""  + label + "\", " + amount + ", \"" + date + "\", " + owner + ");");
     }
 
     public static ArrayList<Object[]> getDebts(String queryModifiers) {
@@ -69,11 +82,21 @@ public class DatabaseHandler {
         return results;
     }
 
-	public static ArrayList<Object[]> execute(String statement, int fieldCount) {
+	public static void modify(String statement) {
+        try {
+            Connection db = connect(DATABASE);
+            PreparedStatement stmt = db.prepareStatement(statement);
+            stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static ArrayList<Object[]> select(String statement, int fieldCount) {
         ResultSet resultSet;
         ArrayList<Object[]> results = new ArrayList<>();
         try {
-            Connection db = connect(DATABASE);
+            Connection db = conn;
             String sql = statement;
             resultSet = db.createStatement().executeQuery(sql);
 
@@ -96,14 +119,10 @@ public class DatabaseHandler {
 
         try {
             conn = DriverManager.getConnection(url);
-            if (conn != null) {
-                conn.getMetaData();
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return conn;
     }
-
 }

@@ -38,12 +38,11 @@ public class MainMenu extends JFrame {
 	private JPanel contentPane;
 	private JButton debtBtn;
 	private JButton addPersonBtn;
-	private JComboBox<String> peopleBox;
 	private DebtCreationWindow debtWindow;
 	private PersonDropdown personDropdown;
 	private JPanel debtsPanel;
 	private JScrollPane scrollPane;
-	
+
 	TotalDebtPanel totalDebtPanel;
 	JPanel debtPanel;
 
@@ -51,6 +50,8 @@ public class MainMenu extends JFrame {
 	 * Create the frame.
 	 */
 	public MainMenu() {
+		DatabaseHandler.connectToDatabase();
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 804, 629);
 		setTitle("EulersAbacus");
@@ -67,7 +68,6 @@ public class MainMenu extends JFrame {
 		debtWindow = new DebtCreationWindow(this);
 		debtBtn = new JButton("Add Debt");
 		addPersonBtn = new JButton("Add Person");
-		peopleBox = new JComboBox<String>(new String[]{"Micah", "Ian", "Isaac", "Lowell", "Monica"});
 		personDropdown = new PersonDropdown();
 
 		contentPanel.add(new LeftButtonPanel(debtBtn, addPersonBtn));
@@ -84,12 +84,13 @@ public class MainMenu extends JFrame {
 
 		rightPanel.add(personDropdown);
 		rightPanel.add(scrollPane);
-
-		Component horizontalStrut = Box.createHorizontalStrut(20);
-
 		rightPanel.add(totalDebtPanel);
+
+		//Add action Listener to personDropdown
+		personDropdown.box.addActionListener(personDropdown);
+		refreshDebts();
 	}
-	
+
 	public void addDebt(String label, double amount, String date, int debtId) {
 		debtsPanel.add(new DebtEntry(label, amount, date, debtId));
 		totalDebtPanel.addDebt(amount);
@@ -102,6 +103,20 @@ public class MainMenu extends JFrame {
 	public void clearDebts() {
 		debtsPanel.removeAll();
 		totalDebtPanel.setDebt(0.0);
+	}
+
+	public void refreshDebts() {
+		clearDebts();
+		ArrayList<Object[]> debtResults;
+		if(personDropdown.box.getSelectedIndex() == 0) {
+			debtResults = DatabaseHandler.select("SELECT label, amount, date, debtId FROM debts", 4);
+		} else {
+			debtResults = DatabaseHandler.select("SELECT label, amount, date, debtId FROM debts WHERE owner=" + personDropdown.personIds.get(personDropdown.box.getSelectedIndex()) , 4);
+		}
+
+		for(Object[] debtInfo : debtResults) {
+			addDebt((String)debtInfo[0], (double)debtInfo[1], (String)debtInfo[2], (int)debtInfo[3]);
+		}
 	}
 
 	private class LeftButtonPanel extends JPanel{
@@ -122,19 +137,19 @@ public class MainMenu extends JFrame {
 			addPersonBtn.setMinimumSize(new Dimension(200, 23));
 			addPersonBtn.setMaximumSize(new Dimension(200, 23));
 			addPersonBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-			
+
 			debtBtn.addActionListener(e -> {
-                debtWindow.clearInfo();
-                debtWindow.setLocation(getLocationOnScreen());
-                debtWindow.setVisible(true);
-            });
+				debtWindow.clearInfo();
+				debtWindow.setLocation(getLocationOnScreen());
+				debtWindow.setVisible(true);
+			});
 			addPersonBtn.addActionListener(e -> {
-                String name = JOptionPane.showInputDialog(this, "Enter Name");
+				String name = JOptionPane.showInputDialog(this, "Enter Name");
 				if(name != null) {
 					DatabaseHandler.addPerson(name);
 					personDropdown.refreshNameList();
 				}
-            });
+			});
 
 			add(debtBtn);
 			add(addPersonBtn);
@@ -149,14 +164,12 @@ public class MainMenu extends JFrame {
 		public PersonDropdown() {
 			this.box = new JComboBox<String>();
 			personIds = new ArrayList<Integer>();
-			
+
 			setBorder(BorderFactory.createEtchedBorder());
 			setAlignmentY(Component.TOP_ALIGNMENT);
 			setMaximumSize(new Dimension(32767, 50));
 			setPreferredSize(new Dimension(570, 50));
 			setLayout(new GridLayout(1, 1));
-
-			box.addActionListener(this);
 
 			refreshNameList();
 			add(this.box);
@@ -167,7 +180,7 @@ public class MainMenu extends JFrame {
 			personIds.clear();
 			box.addItem("All");
 			personIds.add(-1);
-			ArrayList<Object[]> people = DatabaseHandler.execute("SELECT name, personId FROM people", 2);
+			ArrayList<Object[]> people = DatabaseHandler.select("SELECT name, personId FROM people", 2);
 			for(Object[] personInfo : people) {
 				box.addItem((String)personInfo[0]);
 				personIds.add((int)personInfo[1]);
@@ -175,17 +188,8 @@ public class MainMenu extends JFrame {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			clearDebts();
-			ArrayList<Object[]> debtResults;
-			if(box.getSelectedIndex() == 0) {
-				debtResults = DatabaseHandler.execute("SELECT label, amount, date, debtId FROM debts", 4);
-			} else {
-				debtResults = DatabaseHandler.execute("SELECT label, amount, date, debtId FROM debts WHERE debtId=" + personIds.get(box.getSelectedIndex()) , 4);
-			}
-
-			for(Object[] debtInfo : debtResults) {
-				addDebt((String)debtInfo[0], (double)debtInfo[1], (String)debtInfo[2], (int)debtInfo[3]);
-			}
+			System.out.println("" + personIds.get(box.getSelectedIndex()));
+			refreshDebts();
 		}
 	}
 	private class DebtEntry extends JPanel implements ActionListener{
@@ -200,7 +204,7 @@ public class MainMenu extends JFrame {
 			this.amountLbl = new JLabel("$" + Math.abs(amount));
 			this.date = new JLabel(date);
 			this.debtId = debtId;
-			
+
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			JPanel content = new JPanel();
 			add(content);
@@ -212,9 +216,9 @@ public class MainMenu extends JFrame {
 			content.setMinimumSize(new Dimension(10, 50));
 			content.setMaximumSize(new Dimension(32767, 50));
 			content.setLayout(new BoxLayout(content, BoxLayout.X_AXIS));
-			
+
 			this.amountLbl.setFont(new Font("Arial", Font.BOLD, 16));
-			
+
 			JButton pay = new JButton("Pay");
 			pay.addActionListener(this);
 
@@ -227,22 +231,15 @@ public class MainMenu extends JFrame {
 			content.add(Box.createHorizontalStrut(20));
 			content.add(pay);
 			content.add(Box.createHorizontalStrut(20));
-			
-			
+
+
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
-			//TODO remove debt from database
-			debtsPanel.remove(Box.createVerticalStrut(5));
-			debtsPanel.remove(this);
-			debtsPanel.revalidate();
-			debtsPanel.repaint();
-			scrollPane.revalidate();
-			scrollPane.repaint();
-			totalDebtPanel.addDebt(-amount);
-			
+			DatabaseHandler.modify("DELETE FROM debts WHERE debtId=" + debtId);
+			refreshDebts();
 		}
-		
+
 		private void setColor(double amount, JPanel content) {
 			if(amount <= 0)
 				content.setBackground(new Color(230, 250, 230));
@@ -253,23 +250,23 @@ public class MainMenu extends JFrame {
 	private class TotalDebtPanel extends JPanel {
 		JLabel debtLabel;
 		double debt;
-		
+
 		public TotalDebtPanel(double debt) {
 			this.debt = debt;
 			debtLabel = new JLabel();
 			updateText();
-			
+
 			setLayout(new BorderLayout());
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
 			setAlignmentY(CENTER_ALIGNMENT);
 			setPreferredSize(new Dimension(570, 50));
 			setMaximumSize(new Dimension(2000, 50));
-			
+
 			debtLabel.setFont(new Font("Arial", Font.BOLD, 12));
-			
+
 			add(debtLabel);
 		}
-		
+
 		public void addDebt(double debt) {
 			this.debt += debt;
 			updateText();
