@@ -202,7 +202,7 @@ public class MainMenu extends JFrame {
 		public DebtEntry(String name, double amount, String date, int debtId) {
 			this.name = new JLabel(name);
 			this.amount = amount;
-			this.amountLbl = new JLabel("$" + moneyFormat.format(amount));
+			this.amountLbl = new JLabel("$" + moneyFormat.format(-amount));
 			this.date = new JLabel(date);
 			this.debtId = debtId;
 
