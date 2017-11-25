@@ -302,7 +302,7 @@ public class MainMenu extends JFrame {
 			if(this.debt>0)
 				this.debtLabel.setForeground(Color.RED);
 			else
-				this.debtLabel.setForeground(Color.GREEN);
+				this.debtLabel.setForeground(new Color(0x008800));
 		}
 		private void updateText() {
 			setDebtColor();
