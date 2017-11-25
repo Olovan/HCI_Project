@@ -220,7 +220,7 @@ public class MainMenu extends JFrame {
 
 			this.amountLbl.setFont(new Font("Arial", Font.BOLD, 16));
 
-			JButton pay = new JButton("Pay");
+			JButton pay = new JButton("Settle");
 			pay.addActionListener(this);
 
 			content.add(Box.createHorizontalStrut(20));
