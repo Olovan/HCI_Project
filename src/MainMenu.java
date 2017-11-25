@@ -6,8 +6,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 
@@ -63,6 +65,7 @@ public class MainMenu extends JFrame {
 		JPanel contentPanel = new JPanel();
 		contentPane.add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.X_AXIS));
+		contentPanel.setLayout(new BorderLayout());
 
 		debtsPanel = new JPanel();
 		totalDebtPanel = new TotalDebtPanel(215);
@@ -72,8 +75,9 @@ public class MainMenu extends JFrame {
 		addPersonBtn = new JButton("Add Person");
 		personDropdown = new PersonDropdown();
 
-		contentPanel.add(new LeftButtonPanel(debtBtn, addPersonBtn));
-
+		//contentPanel.add(new LeftButtonPanel(debtBtn, addPersonBtn));
+		contentPanel.add(new LeftButtonPanel(debtBtn,addPersonBtn), BorderLayout.WEST);
+		
 		//Build Right Panel
 		JPanel rightPanel = new JPanel();
 		rightPanel.setPreferredSize(new Dimension(600, 600));
@@ -83,13 +87,14 @@ public class MainMenu extends JFrame {
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		contentPanel.add(rightPanel);
-
-		rightPanel.add(personDropdown);
+		contentPanel.add(personDropdown,BorderLayout.NORTH);
+		//rightPanel.add(personDropdown);
 		rightPanel.add(scrollPane);
 		rightPanel.add(totalDebtPanel);
 
 		//Add action Listener to personDropdown
 		personDropdown.box.addActionListener(personDropdown);
+	
 		refreshDebts();
 	}
 
@@ -124,6 +129,7 @@ public class MainMenu extends JFrame {
 	private class LeftButtonPanel extends JPanel{
 		private JButton debtBtn;
 		private JButton addPersonBtn;
+		
 		public LeftButtonPanel(JButton debtBtn, JButton addPersonBtn) {
 			setBorder(BorderFactory.createEtchedBorder());
 			setPreferredSize(new Dimension(200, 10));
@@ -134,12 +140,12 @@ public class MainMenu extends JFrame {
 			debtBtn.setMaximumSize(new Dimension(200, 50));
 			debtBtn.setPreferredSize(new Dimension(200, 50));
 			debtBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-			addPersonBtn.setPreferredSize(new Dimension(200, 23));
+			debtBtn.setFont(new Font("Tahoma",Font.PLAIN,18));
+			addPersonBtn.setPreferredSize(new Dimension(200, 50));
 			addPersonBtn.setMinimumSize(new Dimension(200, 23));
-			addPersonBtn.setMaximumSize(new Dimension(200, 23));
+			addPersonBtn.setMaximumSize(new Dimension(200, 50));
 			addPersonBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-
+			addPersonBtn.setFont(new Font("Tahoma",Font.PLAIN,18));
 			debtBtn.addActionListener(e -> {
 				debtWindow.clearInfo();
 				debtWindow.setLocation(getLocationOnScreen());
@@ -159,6 +165,7 @@ public class MainMenu extends JFrame {
 			this.debtBtn = debtBtn;
 			this.addPersonBtn = addPersonBtn;
 		}
+		
 	}
 	private class PersonDropdown extends JPanel implements ActionListener{
 		JComboBox<String> box;
@@ -172,7 +179,10 @@ public class MainMenu extends JFrame {
 			setMaximumSize(new Dimension(32767, 50));
 			setPreferredSize(new Dimension(570, 50));
 			setLayout(new GridLayout(1, 1));
-
+			DefaultListCellRenderer dlcr = new DefaultListCellRenderer(); 
+			dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
+			box.setFont(new Font("Impact",Font.PLAIN,20));
+			box.setRenderer(dlcr); 
 			refreshNameList();
 			add(this.box);
 		}
@@ -210,7 +220,7 @@ public class MainMenu extends JFrame {
 			JPanel content = new JPanel();
 			add(content);
 			add(Box.createVerticalStrut(5));
-
+			
 			setColor(amount, content);
 			content.setBorder(new LineBorder(new Color(0, 0, 0)));
 			content.setPreferredSize(new Dimension(10, 50));
@@ -218,14 +228,14 @@ public class MainMenu extends JFrame {
 			content.setMaximumSize(new Dimension(32767, 50));
 			content.setLayout(new BoxLayout(content, BoxLayout.X_AXIS));
 
-			this.amountLbl.setFont(new Font("Arial", Font.BOLD, 16));
+			this.amountLbl.setFont(new Font("Impact", Font.PLAIN, 16));
 
 			JButton pay = new JButton("Settle");
 			pay.addActionListener(this);
-
+			pay.setFont(new Font("Tahoma",Font.PLAIN,14));
 			content.add(Box.createHorizontalStrut(20));
 			content.add(this.amountLbl);
-			content.add(Box.createHorizontalStrut(100 - (int)this.amountLbl.getPreferredSize().getWidth()));
+			content.add(Box.createHorizontalStrut(160 - (int)this.amountLbl.getPreferredSize().getWidth()));
 			content.add(this.name);
 			content.add(Box.createHorizontalGlue());
 			content.add(this.date);
@@ -233,7 +243,9 @@ public class MainMenu extends JFrame {
 			content.add(pay);
 			content.add(Box.createHorizontalStrut(20));
 
-
+			this.name.setFont(new Font("Tahoma",Font.BOLD,16));
+			this.date.setFont(new Font("Tahoma",Font.PLAIN,14));
+			this.amountLbl.setFont(new Font("Impact",Font.PLAIN,18));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -243,9 +255,18 @@ public class MainMenu extends JFrame {
 
 		private void setColor(double amount, JPanel content) {
 			if(amount <= 0)
-				content.setBackground(new Color(230, 250, 230));
-			else
-				content.setBackground(new Color(250, 230, 230));
+				content.setBackground(new Color(48, 239, 38));
+				//content.setBackground(new Color(230, 250, 230));
+			else {
+				content.setBackground(new Color(237, 2, 2));
+				//content.setBackground(new Color(250, 230, 230));
+				this.name.setForeground(Color.WHITE);
+				this.date.setForeground(Color.white);
+				this.amountLbl.setForeground(Color.white);
+			}
+				
+				
+				
 		}
 	}
 	private class TotalDebtPanel extends JPanel {
@@ -263,8 +284,8 @@ public class MainMenu extends JFrame {
 			setPreferredSize(new Dimension(570, 50));
 			setMaximumSize(new Dimension(2000, 50));
 
-			debtLabel.setFont(new Font("Arial", Font.BOLD, 12));
-
+			debtLabel.setFont(new Font("Impact", Font.ITALIC, 22));
+			debtLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			add(debtLabel);
 		}
 
@@ -277,8 +298,14 @@ public class MainMenu extends JFrame {
 			this.debt = amount;
 			updateText();
 		}
-
+		public void setDebtColor() {
+			if(this.debt>0)
+				this.debtLabel.setForeground(Color.RED);
+			else
+				this.debtLabel.setForeground(Color.GREEN);
+		}
 		private void updateText() {
+			setDebtColor();
 			debtLabel.setText((this.debt < 0 ? "You Are Owed: $" + moneyFormat.format(Math.abs(this.debt)) : "You Owe Them: $" + moneyFormat.format(Math.abs(this.debt))));
 		}
 	}
