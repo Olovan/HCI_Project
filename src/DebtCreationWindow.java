@@ -150,6 +150,7 @@ public class DebtCreationWindow extends JFrame {
 		JButton btnCreateDebt = new JButton("Create Debt");
 		btnCreateDebt.addActionListener(arg0 -> {
 			setVisible(false);
+			if(!validateInput()) {return;} //Abort if input can't be validated
 			if(debtPayerComboBox.getSelectedItem() == "You") {
 				for(Integer debtParticipant : debtParticipants) {
 					DatabaseHandler.addDebt(debtLabelTextField.getText(), -1 * Double.parseDouble(debtAmountTextField.getText()) / peoplePanel.getComponentCount(), dateFormat.format(new Date()), debtParticipant);
@@ -216,6 +217,31 @@ public class DebtCreationWindow extends JFrame {
 		debtPayerComboBox.addItem("You");
 		comboBox.addItem("You");
 		debtPayerComboBox.setSelectedIndex(debtPayerComboBox.getItemCount() - 1);
+	}
+
+	private boolean validateInput() {
+		//Make sure the debt has a label and an amount entered
+		if(debtLabelTextField.getText().isEmpty() || debtAmountTextField.getText().isEmpty()) {
+			return false;
+		}
+
+		//Make sure someone is added to the debt
+		if(peoplePanel.getComponentCount() <= 0) {
+			return false;
+		}
+
+		//Make sure debt amount is a number
+		try {
+			Double.parseDouble(debtAmountTextField.getText());
+		} catch (Exception e) {
+			return false;
+		}
+
+		//Make sure that you are involved in the debt in some way
+		if(debtPayerComboBox.getSelectedItem() != "You" && comboBox.getItemAt(comboBox.getItemCount() - 1) == "You") {
+			return false;
+		}
+		return true;
 	}
 
 	private void addDebtParticpant(int index) {

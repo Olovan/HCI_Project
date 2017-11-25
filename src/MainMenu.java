@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -42,6 +43,7 @@ public class MainMenu extends JFrame {
 	private PersonDropdown personDropdown;
 	private JPanel debtsPanel;
 	private JScrollPane scrollPane;
+	private DecimalFormat moneyFormat = new DecimalFormat("#,##0.00");
 
 	TotalDebtPanel totalDebtPanel;
 	JPanel debtPanel;
@@ -200,7 +202,7 @@ public class MainMenu extends JFrame {
 		public DebtEntry(String name, double amount, String date, int debtId) {
 			this.name = new JLabel(name);
 			this.amount = amount;
-			this.amountLbl = new JLabel("$" + Math.abs(amount));
+			this.amountLbl = new JLabel("$" + moneyFormat.format(amount));
 			this.date = new JLabel(date);
 			this.debtId = debtId;
 
@@ -277,7 +279,7 @@ public class MainMenu extends JFrame {
 		}
 
 		private void updateText() {
-			debtLabel.setText((this.debt < 0 ? "Owes You: $" + Math.abs(this.debt) : "You Owe Them: $" + Math.abs(this.debt)));
+			debtLabel.setText((this.debt < 0 ? "You Are Owed: $" + moneyFormat.format(Math.abs(this.debt)) : "You Owe Them: $" + moneyFormat.format(Math.abs(this.debt))));
 		}
 	}
 
