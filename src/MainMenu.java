@@ -231,13 +231,18 @@ public class MainMenu extends JFrame {
 			content.setLayout(new BoxLayout(content, BoxLayout.X_AXIS));
 
 			setDebtOwnerName();
+			this.amountLbl.setFont(new Font("Impact", Font.PLAIN, 16));
+			this.name.setFont(new Font("Tahoma",Font.BOLD,16));
+			this.date.setFont(new Font("Tahoma",Font.PLAIN,14));
+			this.amountLbl.setFont(new Font("Impact",Font.PLAIN,18));
+			this.personName.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 			JButton pay = new JButton("Settle");
 			pay.addActionListener(this);
 			pay.setFont(new Font("Tahoma",Font.PLAIN,14));
 			content.add(Box.createHorizontalStrut(20));
 			content.add(this.amountLbl);
-			content.add(Box.createHorizontalStrut(160 - (int)this.amountLbl.getPreferredSize().getWidth()));
+			content.add(Box.createHorizontalStrut(120 - (int)this.amountLbl.getPreferredSize().getWidth()));
 			content.add(this.name);
 			content.add(Box.createHorizontalStrut(10));
 			content.add(this.personName);
@@ -246,12 +251,6 @@ public class MainMenu extends JFrame {
 			content.add(Box.createHorizontalStrut(20));
 			content.add(pay);
 			content.add(Box.createHorizontalStrut(20));
-
-			this.amountLbl.setFont(new Font("Impact", Font.PLAIN, 16));
-			this.name.setFont(new Font("Tahoma",Font.BOLD,16));
-			this.date.setFont(new Font("Tahoma",Font.PLAIN,14));
-			this.amountLbl.setFont(new Font("Impact",Font.PLAIN,18));
-			this.personName.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 
 		public void actionPerformed(ActionEvent e) {
