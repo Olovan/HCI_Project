@@ -71,12 +71,11 @@ public class MainMenu extends JFrame {
 		totalDebtPanel = new TotalDebtPanel(215);
 		scrollPane = new JScrollPane(debtsPanel);
 		debtWindow = new DebtCreationWindow(this);
-		debtBtn = new JButton("Add Debt");
-		addPersonBtn = new JButton("Add Person");
+
 		personDropdown = new PersonDropdown();
 
 		//contentPanel.add(new LeftButtonPanel(debtBtn, addPersonBtn));
-		contentPanel.add(new LeftButtonPanel(debtBtn,addPersonBtn), BorderLayout.WEST);
+		contentPanel.add(new LeftButtonPanel(), BorderLayout.WEST);
 		
 		//Build Right Panel
 		JPanel rightPanel = new JPanel();
@@ -115,7 +114,7 @@ public class MainMenu extends JFrame {
 	public void refreshDebts() {
 		clearDebts();
 		ArrayList<Object[]> debtResults;
-		if(personDropdown.box.getSelectedIndex() == 0) {
+		if(personDropdown== null || personDropdown.box.getSelectedIndex() <= 0) {
 			debtResults = DatabaseHandler.select("SELECT label, amount, date, debtId FROM debts", 4);
 		} else {
 			debtResults = DatabaseHandler.select("SELECT label, amount, date, debtId FROM debts WHERE owner=" + personDropdown.personIds.get(personDropdown.box.getSelectedIndex()) , 4);
@@ -129,12 +128,17 @@ public class MainMenu extends JFrame {
 	private class LeftButtonPanel extends JPanel{
 		private JButton debtBtn;
 		private JButton addPersonBtn;
+		private JButton removePersonBtn;
 		
-		public LeftButtonPanel(JButton debtBtn, JButton addPersonBtn) {
+		public LeftButtonPanel() {
 			setBorder(BorderFactory.createEtchedBorder());
 			setPreferredSize(new Dimension(200, 10));
 			setMaximumSize(new Dimension(300, 32767));
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+			debtBtn = new JButton("Add Debt");
+			addPersonBtn = new JButton("Add Person");
+			removePersonBtn = new JButton("Remove Person");
 
 			debtBtn.setMinimumSize(new Dimension(200, 23));
 			debtBtn.setMaximumSize(new Dimension(200, 50));
@@ -146,6 +150,11 @@ public class MainMenu extends JFrame {
 			addPersonBtn.setMaximumSize(new Dimension(200, 50));
 			addPersonBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 			addPersonBtn.setFont(new Font("Tahoma",Font.PLAIN,18));
+			removePersonBtn.setPreferredSize(new Dimension(200, 50));
+			removePersonBtn.setMinimumSize(new Dimension(200, 23));
+			removePersonBtn.setMaximumSize(new Dimension(200, 50));
+			removePersonBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+			removePersonBtn.setFont(new Font("Tahoma",Font.PLAIN,18));
 			debtBtn.addActionListener(e -> {
 				debtWindow.clearInfo();
 				debtWindow.setLocation(getLocationOnScreen());
@@ -158,12 +167,13 @@ public class MainMenu extends JFrame {
 					personDropdown.refreshNameList();
 				}
 			});
+			removePersonBtn.addActionListener(e -> {
+				personDropdown.deleteCurrentPerson();
+			});
 
 			add(debtBtn);
 			add(addPersonBtn);
-
-			this.debtBtn = debtBtn;
-			this.addPersonBtn = addPersonBtn;
+			add(removePersonBtn);
 		}
 		
 	}
@@ -183,8 +193,8 @@ public class MainMenu extends JFrame {
 			dlcr.setHorizontalAlignment(DefaultListCellRenderer.CENTER);
 			box.setFont(new Font("Impact",Font.PLAIN,20));
 			box.setRenderer(dlcr); 
-			refreshNameList();
 			add(this.box);
+			refreshNameList();
 		}
 
 		public void refreshNameList() {
@@ -197,6 +207,19 @@ public class MainMenu extends JFrame {
 				box.addItem((String)personInfo[0]);
 				personIds.add((int)personInfo[1]);
 			}
+			box.revalidate();
+			box.repaint();
+		}
+
+		public void deleteCurrentPerson() {
+			if(box.getSelectedIndex() <= 0)
+				return;
+
+			int targetPersonId = personIds.remove(box.getSelectedIndex());
+			DatabaseHandler.modify("DELETE FROM debts WHERE owner = " + targetPersonId);
+			DatabaseHandler.modify("DELETE FROM people WHERE personId = " + targetPersonId);
+			refreshNameList();
+			refreshDebts();
 		}
 
 		public void actionPerformed(ActionEvent e) {
