@@ -3,7 +3,8 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 class Main  {
 	public static void main (String[] args) throws Exception{
-		//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		/*
 		try {
 	        for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 	            if ("Nimbus".equals(info.getName())) {
@@ -17,6 +18,7 @@ class Main  {
 	    } catch (Exception e) {
 	    	e.printStackTrace();
 	    }   
+		*/
 		MainMenu frame = new MainMenu();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
