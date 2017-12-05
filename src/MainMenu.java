@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.io.PrintWriter;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -76,7 +77,7 @@ public class MainMenu extends JFrame {
 
 		//contentPanel.add(new LeftButtonPanel(debtBtn, addPersonBtn));
 		contentPanel.add(new LeftButtonPanel(), BorderLayout.WEST);
-		
+
 		//Build Right Panel
 		JPanel rightPanel = new JPanel();
 		rightPanel.setPreferredSize(new Dimension(600, 600));
@@ -93,7 +94,7 @@ public class MainMenu extends JFrame {
 
 		//Add action Listener to personDropdown
 		personDropdown.box.addActionListener(personDropdown);
-	
+
 		refreshDebts();
 	}
 
@@ -129,7 +130,7 @@ public class MainMenu extends JFrame {
 		private JButton debtBtn;
 		private JButton addPersonBtn;
 		private JButton removePersonBtn;
-		
+
 		public LeftButtonPanel() {
 			setBorder(BorderFactory.createEtchedBorder());
 			setPreferredSize(new Dimension(200, 10));
@@ -174,8 +175,10 @@ public class MainMenu extends JFrame {
 			add(debtBtn);
 			add(addPersonBtn);
 			add(removePersonBtn);
+			add(Box.createVerticalGlue());
+			add(new ExportToCSVBtn());
 		}
-		
+
 	}
 	private class PersonDropdown extends JPanel implements ActionListener{
 		JComboBox<String> box;
@@ -245,7 +248,7 @@ public class MainMenu extends JFrame {
 			JPanel content = new JPanel();
 			add(content);
 			add(Box.createVerticalStrut(5));
-			
+
 			setColor(amount, content);
 			content.setBorder(new LineBorder(new Color(0, 0, 0)));
 			content.setPreferredSize(new Dimension(10, 50));
@@ -284,7 +287,7 @@ public class MainMenu extends JFrame {
 		private void setColor(double amount, JPanel content) {
 			if(amount <= 0)
 				content.setBackground(new Color(48, 239, 38));
-				//content.setBackground(new Color(230, 250, 230));
+			//content.setBackground(new Color(230, 250, 230));
 			else {
 				content.setBackground(new Color(237, 2, 2));
 				//content.setBackground(new Color(250, 230, 230));
@@ -341,5 +344,59 @@ public class MainMenu extends JFrame {
 		}
 	}
 
+	private class ExportToCSVBtn extends JButton implements ActionListener{
 
+		public ExportToCSVBtn() {
+			addActionListener(this);
+			setText("Export To CSV");
+			setMinimumSize(new Dimension(200, 23));
+			setMaximumSize(new Dimension(200, 50));
+			setPreferredSize(new Dimension(200, 50));
+			setAlignmentX(Component.CENTER_ALIGNMENT);
+			setFont(new Font("Tahoma",Font.PLAIN,18));
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			exportToCSV();
+		}
+
+		private void exportToCSV() {
+			ArrayList<StringBuilder> lines = new ArrayList<StringBuilder>();
+
+			//Get list of personIds
+			ArrayList<Object[]> peopleInfo = DatabaseHandler.select("SELECT personId, name FROM people", 2);
+
+			//Iterate through the personIds appending to each line
+			for(Object[] personInfo : peopleInfo) {
+				int id = (int)personInfo[0];
+				String name = (String)personInfo[1];
+				StringBuilder line1 = new StringBuilder();
+				StringBuilder line2 = new StringBuilder();
+				line2.append(name);
+				ArrayList<Object[]> debtsInfo = DatabaseHandler.select("SELECT amount, label FROM debts WHERE owner=" + id, 2);
+				for(Object[] debtInfo : debtsInfo) {
+					double amount = (double)debtInfo[0];
+					String label = (String)debtInfo[1];
+					line1.append("," + label);
+					line2.append("," + amount);
+				}
+				lines.add(line1);
+				lines.add(line2);
+				lines.add(new StringBuilder(""));
+				lines.add(new StringBuilder(""));
+			}
+
+			//Write lines to file
+			try {
+				PrintWriter fileIO = new PrintWriter("ledger.csv");
+				for(StringBuilder line : lines) {
+					fileIO.println(line.toString());
+				}
+				fileIO.flush();
+				fileIO.close();
+			} catch(Exception e) {
+				System.out.println("CSV file writing failed");
+			}
+		}
+	}
 }

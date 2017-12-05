@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.GridBagLayout;
@@ -222,11 +223,13 @@ public class DebtCreationWindow extends JFrame {
 	private boolean validateInput() {
 		//Make sure the debt has a label and an amount entered
 		if(debtLabelTextField.getText().isEmpty() || debtAmountTextField.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "The debt must have a label and an amount", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 
 		//Make sure someone is added to the debt
 		if(peoplePanel.getComponentCount() <= 0) {
+			JOptionPane.showMessageDialog(this, "The debt must have participants", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 
@@ -234,11 +237,13 @@ public class DebtCreationWindow extends JFrame {
 		try {
 			Double.parseDouble(debtAmountTextField.getText());
 		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "The debt amount must be a valid number", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 
 		//Make sure that you are involved in the debt in some way
 		if(debtPayerComboBox.getSelectedItem() != "You" && comboBox.getItemAt(comboBox.getItemCount() - 1) == "You") {
+			JOptionPane.showMessageDialog(this, "The debt must involve you as either a participant or the payer", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		return true;
