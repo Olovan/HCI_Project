@@ -2,7 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Dell/Desktop/seaglasslookandfeel-0.2.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Dell/Desktop/jfreechart-1.0.19.zip"/>
+	<classpathentry kind="lib" path="lib/JTattoo-1.6.11.jar"/>
+	<classpathentry kind="lib" path="lib/quaqua-3.6.11.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.21.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
